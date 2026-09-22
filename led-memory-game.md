@@ -28,6 +28,14 @@ The first major problem was that the LEDs could display the sequence, but none o
 ![Final LED Memory Game Prototype](IMG_1113.JPG)
 
 Code:
+
+```cpp
+// ==========================================
+// LED MEMORY GAME
+// 4 LEDs + 4 Buttons
+// ==========================================
+
+// GAME LED PINS
 const int yellowLED = 10;
 const int greenLED  = 9;
 const int redLED    = 6;
@@ -270,6 +278,7 @@ void victoryFlash() {
     delay(150);
   }
 }
+```
 
 
 ## Peer Support:
