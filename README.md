@@ -1,5 +1,5 @@
-# Blairwen
-About me:
+# Blairwen: About me
+
 Hello! My name is Blair and I'm a student interested in computer science, mathematics, and engineering. As an innovator, I enjoy using coding to solve problems and make everyday tasks easier. I’m also interested in integrating a variety of concepts in my code to improve efficiency and quality.  
 
  
