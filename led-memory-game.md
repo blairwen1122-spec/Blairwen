@@ -25,6 +25,7 @@ I built the project by first separating it into smaller parts instead of trying 
 The first major problem was that the LEDs could display the sequence, but none of the buttons would register when I pressed them. Since the LEDs were already responding to the program, I knew the Arduino was running the code, so I focused on the button instead of changing the code for sequencing. The first version of my code expected the buttons to send the opposite signal from how I had wired them. In my circuit, an unpressed button should read 0, while pressing it should change the reading to 1. I adjusted the input settings so the Arduino would read the signals according to the way the buttons were physically connected. When that still did not completely solve the problem, I temporarily removed the game logic and uploaded a smaller program for testing that printed the value of each button with digitalRead() in the Serial Monitor. This gave me a 0 or 1 for each input and let me test the four buttons individually. From there, I could check the pin assignments and wiring before putting the button code back into the full game. This was much more useful than repeatedly changing the full program because each test was checking one specific possible cause.
 
 ## Final Prototype:
+![Final LED Memory Game Prototype](IMG_1113.JPG)
 
 ## Peer Support:
 
