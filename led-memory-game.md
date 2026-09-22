@@ -27,6 +27,251 @@ The first major problem was that the LEDs could display the sequence, but none o
 ## Final Prototype:
 ![Final LED Memory Game Prototype](IMG_1113.JPG)
 
+Code:
+const int yellowLED = 10;
+const int greenLED  = 9;
+const int redLED    = 6;
+const int blueLED   = 5;
+
+// BUTTON PINS
+// Change these four numbers if your buttons
+// are connected to different Arduino pins.
+const int yellowButton = 13;
+const int greenButton  = 12;
+const int redButton    = 11;
+const int blueButton   = 8;
+
+// Put LEDs and buttons in matching order
+const int ledPins[4] = {
+  yellowLED,
+  greenLED,
+  redLED,
+  blueLED
+};
+
+const int buttonPins[4] = {
+  yellowButton,
+  greenButton,
+  redButton,
+  blueButton
+};
+
+// Maximum sequence length
+const int maxSequence = 20;
+
+// Stores the pattern
+int sequence[maxSequence];
+
+// Start with one light
+int sequenceLength = 1;
+
+
+void setup() {
+
+  Serial.begin(9600);
+
+  // LEDs are outputs
+  for (int i = 0; i < 4; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  // Buttons
+  pinMode(yellowButton, INPUT_PULLUP);
+  pinMode(greenButton, INPUT_PULLUP);
+  pinMode(redButton, INPUT_PULLUP);
+  pinMode(blueButton, INPUT_PULLUP);
+
+  // Helps create different random sequences
+  randomSeed(analogRead(A0));
+
+  // Create first light in sequence
+  sequence[0] = random(0, 4);
+
+  delay(1000);
+}
+
+
+void loop() {
+
+  // Show the pattern
+  showSequence();
+
+  // Let player repeat it
+  bool correct = getPlayerSequence();
+
+  if (correct) {
+
+    correctFlash();
+
+    // Add another light
+    if (sequenceLength < maxSequence) {
+
+      sequence[sequenceLength] = random(0, 4);
+      sequenceLength++;
+
+    } else {
+
+      // Player completed all 20
+      victoryFlash();
+
+      sequenceLength = 1;
+      sequence[0] = random(0, 4);
+    }
+
+  } else {
+
+    wrongFlash();
+
+    // Restart game
+    sequenceLength = 1;
+    sequence[0] = random(0, 4);
+  }
+
+  delay(1000);
+}
+
+
+// ==========================================
+// SHOW THE STORED SEQUENCE
+// ==========================================
+
+void showSequence() {
+
+  delay(500);
+
+  for (int i = 0; i < sequenceLength; i++) {
+
+    int currentLED = sequence[i];
+
+    digitalWrite(ledPins[currentLED], HIGH);
+    delay(600);
+
+    digitalWrite(ledPins[currentLED], LOW);
+    delay(250);
+  }
+}
+
+
+// ==========================================
+// CHECK PLAYER INPUT
+// ==========================================
+
+bool getPlayerSequence() {
+
+  for (int i = 0; i < sequenceLength; i++) {
+
+    int buttonPressed = waitForButton();
+
+    // Flash matching LED when button is pressed
+    digitalWrite(ledPins[buttonPressed], HIGH);
+    delay(200);
+    digitalWrite(ledPins[buttonPressed], LOW);
+
+    // Check against correct sequence
+    if (buttonPressed != sequence[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
+// ==========================================
+// WAIT FOR A BUTTON
+// ==========================================
+
+int waitForButton() {
+
+  while (true) {
+
+    for (int i = 0; i < 4; i++) {
+
+      if (digitalRead(buttonPins[i]) == LOW) {
+
+        // Debounce
+        delay(30);
+
+        if (digitalRead(buttonPins[i]) == LOW) {
+
+          // Wait until button is released
+          while (digitalRead(buttonPins[i]) == LOW) {
+            delay(10);
+          }
+
+          delay(30);
+
+          return i;
+        }
+      }
+    }
+  }
+}
+
+
+// ==========================================
+// CORRECT = ALL LIGHTS FLASH TWICE
+// ==========================================
+
+void correctFlash() {
+
+  for (int j = 0; j < 2; j++) {
+
+    for (int i = 0; i < 4; i++) {
+      digitalWrite(ledPins[i], HIGH);
+    }
+
+    delay(250);
+
+    for (int i = 0; i < 4; i++) {
+      digitalWrite(ledPins[i], LOW);
+    }
+
+    delay(250);
+  }
+}
+
+
+// ==========================================
+// WRONG = RED LED FLASHES 3 TIMES
+// ==========================================
+
+void wrongFlash() {
+
+  for (int i = 0; i < 3; i++) {
+
+    digitalWrite(redLED, HIGH);
+    delay(250);
+
+    digitalWrite(redLED, LOW);
+    delay(250);
+  }
+}
+
+
+// ==========================================
+// COMPLETE GAME
+// ==========================================
+
+void victoryFlash() {
+
+  for (int j = 0; j < 5; j++) {
+
+    for (int i = 0; i < 4; i++) {
+      digitalWrite(ledPins[i], HIGH);
+    }
+
+    delay(150);
+
+    for (int i = 0; i < 4; i++) {
+      digitalWrite(ledPins[i], LOW);
+    }
+
+    delay(150);
+  }
+}
+
+
 ## Peer Support:
 
 When my buttons weren’t responding, Matthew helped me go through my wiring and check the connections carefully as I'm not experienced with hardware. He told me to trace each button from the Arduino pin to the breadboard instead of first assuming something was wrong with my code. That made it easier to figure out where the problem was and changed how I debugged the rest of the circuit.
